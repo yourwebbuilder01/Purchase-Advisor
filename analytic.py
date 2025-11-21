@@ -29,26 +29,22 @@ class PurchaseAdvisor:
         print()
 
     def calculate_score(self, price, savings, income, usage, monthly_spending):
-        # Can you afford it safely?
-        emergency_fund = income * 3  # 3 months of expenses
+        emergency_fund = income * 3
         remaining_savings = savings - price
         safety_score = min(1.0, remaining_savings / emergency_fund)
         
-        # Is it good value for money?
         if usage > 0:
-            cost_per_use = price / (usage * 12)  # Cost per use over a year
-            value_score = min(1.0, 1.0 / (cost_per_use + 0.1))  # Lower cost = higher score
+            cost_per_use = price / (usage * 12)
+            value_score = min(1.0, 1.0 / (cost_per_use + 0.1))
         else:
             value_score = 0.1
         
-        # Is it within your means?
         income_ratio = price / income
         if income_ratio <= 0.03: affordability_score = 1.0
         elif income_ratio <= 0.07: affordability_score = 0.7
         elif income_ratio <= 0.15: affordability_score = 0.4
         else: affordability_score = 0.1
         
-        # Monthly spending impact
         spending_ratio = monthly_spending / income if income > 0 else 1
         if spending_ratio <= 0.6: spending_score = 1.0
         elif spending_ratio <= 0.8: spending_score = 0.7
@@ -81,12 +77,12 @@ class PurchaseAdvisor:
             try:
                 choice = input("   Choose 1-6: ")
                 usage_map = {
-                    '1': 90,  # Multiple times daily
-                    '2': 30,  # Daily
-                    '3': 15,  # Several times weekly
-                    '4': 4,   # Weekly
-                    '5': 1.5, # Occasionally
-                    '6': 0.5  # Rarely
+                    '1': 90,
+                    '2': 30,
+                    '3': 15,
+                    '4': 4,
+                    '5': 1.5,
+                    '6': 0.5
                 }
                 if choice in usage_map:
                     return usage_map[choice]
@@ -124,7 +120,6 @@ class PurchaseAdvisor:
         self.print_section("Financial Details")
         price = self.get_number("How much does it cost")
         
-        # Get usage frequency with descriptive options
         usage = self.get_usage()
         
         savings = self.get_number("How much do you have in savings")
@@ -132,7 +127,6 @@ class PurchaseAdvisor:
         monthly_spending = self.get_number("How much do you spend monthly (bills, food, etc)")
         self.print_footer()
         
-        # Analyze
         print("\n")
         self.print_section("Analysis Progress")
         self.show_loading("   Analyzing your finances", 1.5)
@@ -144,13 +138,11 @@ class PurchaseAdvisor:
         
         score = self.calculate_score(price, savings, income, usage, monthly_spending)
         
-        # Show results
         print("\n")
         self.print_section("Purchase Analysis Results")
         self.print_line(f"Item: {item}")
         self.print_line(f"Cost: ${price:,.2f}")
         
-        # Show usage description
         usage_desc = ""
         if usage >= 90: usage_desc = "Multiple times daily"
         elif usage >= 30: usage_desc = "Daily"
@@ -183,7 +175,6 @@ class PurchaseAdvisor:
         self.print_line()
         self.print_section("Financial Impact")
         
-        # Show details
         remaining = savings - price
         emergency_months = remaining / income if income > 0 else 0
         cost_per_use = price / (usage * 12) if usage > 0 else price
@@ -194,7 +185,6 @@ class PurchaseAdvisor:
         self.print_line(f"Cost per use: ${cost_per_use:.2f}")
         self.print_line(f"Monthly spending: {monthly_spending_ratio:.0%} of income")
         
-        # Additional insights
         self.print_line()
         if cost_per_use < 1:
             self.print_line("💡 Great value! Cost per use is very low")
@@ -212,7 +202,6 @@ class PurchaseAdvisor:
         
         self.print_footer()
         
-        # Save to history
         purchase_data = {
             'item': item,
             'price': price,
